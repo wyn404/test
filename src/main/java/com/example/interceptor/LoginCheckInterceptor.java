@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.example.pojo.Result;
 import com.example.utils.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -23,7 +24,19 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
 
         //2.判断请求url中是否包含login，如果包含，说明是登录操作，放行。
         if(url.contains("login")){
-            log.info("登录操作, 放行...");
+
+            // 获取验证码
+            String verify_code = (String) req.getSession().getAttribute("verify_code").toString();
+            // 用户端填写的验证码
+            String code = req.getParameter("code");
+            log.info("后端生成的验证码为：{}", verify_code);
+            log.info("传入的验证码为：{}", code);
+
+            if (code == null || verify_code == null || "".equals(code) || !verify_code.equalsIgnoreCase(code)) {
+                // 验证码不正确
+                throw new AuthenticationServiceException("验证码不正确");
+            }
+            log.info("登陆操作，验证码正确，放行...");
             return true;
         }
 

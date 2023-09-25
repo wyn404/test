@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import com.example.anno.Log;
 import com.example.pojo.Emp;
 import com.example.pojo.PageBean;
 import com.example.pojo.Result;
@@ -28,36 +29,39 @@ public class EmpController {
                        @RequestParam(defaultValue = "10") Integer pageSize,
                        String name, Short gender,
                        @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate begin,
-                       @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end){
-        log.info("分页查询, 参数: {},{},{},{},{},{}",page,pageSize,name,gender,begin,end);
+                       @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end) {
+        log.info("分页查询, 参数: {},{},{},{},{},{}", page, pageSize, name, gender, begin, end);
         //调用service分页查询
-        PageBean pageBean = empService.page(page,pageSize,name,gender,begin,end);
+        PageBean pageBean = empService.page(page, pageSize, name, gender, begin, end);
         return Result.success(pageBean);
     }
 
+    @Log
     @DeleteMapping("/{ids}")
-    public Result delete(@PathVariable List<Integer> ids){
-        log.info("批量删除操作, ids:{}",ids);
+    public Result delete(@PathVariable List<Integer> ids) {
+        log.info("批量删除操作, ids:{}", ids);
         empService.delete(ids);
         return Result.success();
     }
 
+    @Log
     @PostMapping
-    public Result save(@RequestBody Emp emp){
+    public Result save(@RequestBody Emp emp) {
         log.info("新增员工, emp: {}", emp);
         empService.save(emp);
         return Result.success();
     }
 
     @GetMapping("/{id}")
-    public Result getById(@PathVariable Integer id){
-        log.info("根据ID查询员工信息, id: {}",id);
+    public Result getById(@PathVariable Integer id) {
+        log.info("根据ID查询员工信息, id: {}", id);
         Emp emp = empService.getById(id);
         return Result.success(emp);
     }
 
+    @Log
     @PutMapping
-    public Result update(@RequestBody Emp emp){
+    public Result update(@RequestBody Emp emp) {
         log.info("更新员工信息 : {}", emp);
         empService.update(emp);
         return Result.success();

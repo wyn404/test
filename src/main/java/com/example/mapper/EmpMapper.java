@@ -1,6 +1,7 @@
 package com.example.mapper;
 
 import com.example.pojo.Emp;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -18,8 +19,8 @@ public interface EmpMapper {
      * 查询总记录数
      * @return
      */
-    //@Select("select count(*) from emp")
-    //public Long count();
+    @Select("select count(*) from emp")
+    public Long count();
 
     /**
      * 分页查询,获取列表数据
@@ -34,7 +35,7 @@ public interface EmpMapper {
      * 员工信息查询
      * @return
      */
-    //@Select("select * from emp")
+//    @Select("select * from emp")
     public List<Emp> list(String name, Short gender, LocalDate begin, LocalDate end);
 
     /**
@@ -42,6 +43,9 @@ public interface EmpMapper {
      * @param ids
      */
     void delete(List<Integer> ids);
+
+    @Delete("delete from emp where dept_id = #{deptId}")
+    void deleteById(Integer deptId);
 
     /**
      * 新增员工

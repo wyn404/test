@@ -25,4 +25,8 @@ public interface DeptService {
      * @param dept
      */
     void add(Dept dept);
+
+    void updateDeptById(Dept dept);
+
+    Dept getById(Integer id);
 }

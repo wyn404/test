@@ -12,8 +12,14 @@ public class WebConfig implements WebMvcConfigurer {
     @Autowired
     private LoginCheckInterceptor loginCheckInterceptor;
 
+    /*
+     *       /* 一级路径：   能匹配/depts,/emps,/login，不能匹配/depts/1
+     *       /** 任意级路径： 能匹配/depts,/depts/1,/depts/1/2
+     */
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(loginCheckInterceptor).addPathPatterns("/**").excludePathPatterns("/login");
+//        registry.addInterceptor(loginCheckInterceptor).addPathPatterns("/**").excludePathPatterns("/login");
+        registry.addInterceptor(loginCheckInterceptor).addPathPatterns("/**").excludePathPatterns("/verifyCode");
     }
 }
