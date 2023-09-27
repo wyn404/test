@@ -1,32 +1,12 @@
 package com.example.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.pojo.Dept;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+public interface DeptService extends IService<Dept> {
 
-/**
- * 部门管理
- */
-public interface DeptService {
-    /**
-     * 查询全部部门数据
-     * @return
-     */
-    List<Dept> list();
+    @Transactional(rollbackFor = Exception.class) // spring事务管理,默认情况下，只有RuntimeException才回滚事务
+    void removeById(Integer id);
 
-    /**
-     * 删除部门
-     * @param id
-     */
-    void delete(Integer id);
-
-    /**
-     * 新增部门
-     * @param dept
-     */
-    void add(Dept dept);
-
-    void updateDeptById(Dept dept);
-
-    Dept getById(Integer id);
 }

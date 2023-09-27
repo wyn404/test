@@ -1,79 +1,59 @@
 package com.example.service.impl;
 
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.mapper.EmpMapper;
 import com.example.pojo.Emp;
-import com.example.pojo.PageBean;
 import com.example.service.EmpService;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
-public class EmpServiceImpl implements EmpService {
+public class EmpServiceImpl extends ServiceImpl<EmpMapper, Emp> implements EmpService {
 
     @Autowired
     private EmpMapper empMapper;
 
-    /*@Override
-    public PageBean page(Integer page, Integer pageSize) {
-        //1. 获取总记录数
-        Long count = empMapper.count();
-
-        //2. 获取分页查询结果列表
-        Integer start = (page - 1) * pageSize;
-        List<Emp> empList = empMapper.page(start, pageSize);
-
-        //3. 封装PageBean对象
-        PageBean pageBean = new PageBean(count, empList);
-        return pageBean;
-    }*/
-
-
     @Override
-    public PageBean page(Integer page, Integer pageSize,String name, Short gender, LocalDate begin, LocalDate end) {
-        //1. 设置分页参数
-        PageHelper.startPage(page,pageSize);
-
-        //2. 执行查询
-        List<Emp> empList = empMapper.list(name, gender, begin, end);
-        Page<Emp> p = (Page<Emp>) empList;
-
-        //3. 封装PageBean对象
-        PageBean pageBean = new PageBean(p.getTotal(), p.getResult());
-        return pageBean;
-    }
-
-    @Override
-    public void delete(List<Integer> ids) {
-        empMapper.delete(ids);
-    }
-
-    @Override
-    public void save(Emp emp) {
-        emp.setCreateTime(LocalDateTime.now());
+    public boolean updateById(Emp emp) {
         emp.setUpdateTime(LocalDateTime.now());
-        empMapper.insert(emp);
+        return empMapper.updateById(emp) > 0;
     }
 
     @Override
-    public Emp getById(Integer id) {
-        return empMapper.getById(id);
-    }
+    public IPage<Emp> getPage(Integer currentPage, Integer pageSize, String name, Short gender, LocalDate begin, LocalDate end) {
+        IPage<Emp> page = new Page<>(currentPage, pageSize);
 
-    @Override
-    public void update(Emp emp) {
-        emp.setUpdateTime(LocalDateTime.now());
+        LambdaQueryWrapper<Emp> lqw = new LambdaQueryWrapper<>();
 
-        empMapper.update(emp);
+        lqw.like(Strings.isNotEmpty(name), Emp::getName, name)
+                .eq(gender != null, Emp::getGender, gender)
+                .lt(end != null, Emp::getEntrydate, end)
+                .gt(begin != null, Emp::getEntrydate, begin);
+
+        return empMapper.selectPage(page, lqw);
     }
 
     @Override
     public Emp login(Emp emp) {
-        return empMapper.getByUsernameAndPassword(emp);
+        LambdaQueryWrapper<Emp> lqw = new LambdaQueryWrapper<>();
+
+        lqw.eq(Emp::getUsername, emp.getUsername())
+                .eq(Emp::getPassword, emp.getPassword());
+
+        return empMapper.selectOne(lqw);
+    }
+
+    @Override
+    public boolean save(Emp emp) {
+        emp.setUpdateTime(LocalDateTime.now());
+        emp.setCreateTime(LocalDateTime.now());
+        return empMapper.insert(emp) > 0;
     }
 }

@@ -2,7 +2,6 @@ package com.example.controller;
 
 import com.example.anno.Log;
 import com.example.pojo.Emp;
-import com.example.pojo.PageBean;
 import com.example.pojo.Result;
 import com.example.service.EmpService;
 import lombok.extern.slf4j.Slf4j;
@@ -21,9 +20,13 @@ import java.util.List;
 @RequestMapping("/emps")
 public class EmpController {
 
+//    @Autowired
+//    private EmpService empService;
+
     @Autowired
     private EmpService empService;
 
+/*
     @GetMapping
     public Result page(@RequestParam(defaultValue = "1") Integer page,
                        @RequestParam(defaultValue = "10") Integer pageSize,
@@ -35,12 +38,24 @@ public class EmpController {
         PageBean pageBean = empService.page(page, pageSize, name, gender, begin, end);
         return Result.success(pageBean);
     }
+*/
+
+    @GetMapping
+    public Result page(@RequestParam(defaultValue = "1") Integer currentPage,
+                       @RequestParam(defaultValue = "10") Integer pageSize,
+                       String name, Short gender,
+                       @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate beginTime,
+                       @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endTime) {
+        log.info("分页查询, 参数: {},{},{},{},{},{}", currentPage, pageSize, name, gender, beginTime, endTime);
+        //调用service分页查询
+        return Result.success(empService.getPage(currentPage, pageSize, name, gender, beginTime, endTime));
+    }
 
     @Log
     @DeleteMapping("/{ids}")
     public Result delete(@PathVariable List<Integer> ids) {
         log.info("批量删除操作, ids:{}", ids);
-        empService.delete(ids);
+        empService.removeBatchByIds(ids);
         return Result.success();
     }
 
@@ -63,7 +78,7 @@ public class EmpController {
     @PutMapping
     public Result update(@RequestBody Emp emp) {
         log.info("更新员工信息 : {}", emp);
-        empService.update(emp);
+        empService.updateById(emp);
         return Result.success();
     }
 }
