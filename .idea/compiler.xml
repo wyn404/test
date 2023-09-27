@@ -7,14 +7,25 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="springboot-web" />
+        <module name="springboot-service" />
         <module name="tlias-web-management" />
-        <module name="springboot-test" />
+        <module name="springboot-pojo" />
+        <module name="springboot-mapper" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="sprintboot-service" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="springboot-test" options="-parameters" />
+      <module name="springboot-mapper" options="-parameters" />
+      <module name="springboot-pojo" options="-parameters" />
+      <module name="springboot-service" options="-parameters" />
+      <module name="springboot-test" options="" />
+      <module name="springboot-web" options="-parameters" />
+      <module name="sprintboot-service" options="-parameters" />
       <module name="tlias-web-management" options="-parameters" />
     </option>
   </component>
